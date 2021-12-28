@@ -16,3 +16,16 @@ This will start a container MySQL Database running on localhost:3306.
 
 
 Open a client (like DBeaver) and use credentials above.
+
+
+
+# Project Structure
+
+- `main.go`
+- `app/app.go` ===> start server and define routes
+- `app/handlers.go` ===> implementation of handling the service
+- `domain/customer.go` ===> db data schema and interfaces of retrieving info from db
+- `domain/CustomerRepositoryDb.go` ===> implementation of retrieving info from db
+- `domain/CustomerRepositoryStub.go` ===> not used, is for mock data
+- `service/customerService.go` ===> calls the database
+
