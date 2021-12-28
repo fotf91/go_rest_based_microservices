@@ -1,46 +1,38 @@
 package app
 
 import (
+	"banking/service"
 	"encoding/json"
 	"encoding/xml"
-	"fmt"
 	"net/http"
-
-	"github.com/gorilla/mux"
 )
 
-type Customer struct {
-	Name    string `json:"full_name" xml:"name"`
-	City    string `json:"city" xml:"city"`
-	ZipCode string `json:"zip_code" xml:"zip_code"`
+// type Customer struct {
+// 	Name    string `json:"full_name" xml:"name"`
+// 	City    string `json:"city" xml:"city"`
+// 	ZipCode string `json:"zip_code" xml:"zip_code"`
 
-	/**
-	code: Name    string `json:"full_name"`
-	means that the name of the attribute is Name
-	but when converted to json is shown as full_name
-	----
-	code: Name    string `json:"full_name" xml:"name"`
-	same as above for xml
-	*/
+// 	/**
+// 	code: Name    string `json:"full_name"`
+// 	means that the name of the attribute is Name
+// 	but when converted to json is shown as full_name
+// 	----
+// 	code: Name    string `json:"full_name" xml:"name"`
+// 	same as above for xml
+// 	*/
+// }
+
+type CustomerHandlers struct {
+	service service.CustomerService
 }
 
-func greet(w http.ResponseWriter, r *http.Request) {
+func (ch *CustomerHandlers) getAllCustomers(w http.ResponseWriter, r *http.Request) {
 	/**
 	  w http.ResponseWriter - sends the response back to the client
 	  r *http.Request - request coming to the server
 	*/
-	fmt.Fprint(w, "Hello World!!!")
-}
 
-func getAllCustomers(w http.ResponseWriter, r *http.Request) {
-	/**
-	  w http.ResponseWriter - sends the response back to the client
-	  r *http.Request - request coming to the server
-	*/
-	customers := []Customer{
-		{Name: "Fotis", City: "Athens", ZipCode: "12345"},
-		{Name: "Alex", City: "Lp", ZipCode: "12345"},
-	}
+	customers, _ := ch.service.GetAllCustomer()
 
 	// check if the request headers want to retrieve xml or json formatted response
 	if r.Header.Get("Content-Type") == "application/xml" {
@@ -50,14 +42,4 @@ func getAllCustomers(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
 		json.NewEncoder(w).Encode(customers)
 	}
-}
-
-func getCustomer(w http.ResponseWriter, r *http.Request) {
-	// read the input parameter customer_id and return as response
-	vars := mux.Vars(r)
-	fmt.Fprint(w, vars["customer_id"])
-}
-
-func createCustomer(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "Post Request Received")
 }

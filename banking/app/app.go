@@ -1,6 +1,8 @@
 package app
 
 import (
+	"banking/domain"
+	"banking/service"
 	"log"
 	"net/http"
 
@@ -10,13 +12,12 @@ import (
 func Start() {
 	router := mux.NewRouter()
 
-	// define routes
-	router.HandleFunc("/greet", greet).Methods(http.MethodGet)
-	router.HandleFunc("/customers", getAllCustomers).Methods(http.MethodGet)
-	router.HandleFunc("/customers", createCustomer).Methods(http.MethodPost)
+	// wiring
+	// ch := CustomerHandlers{service: service.NewCustomerService(domain.NewCustomerRepositoryStub())}
+	ch := CustomerHandlers{service: service.NewCustomerService(domain.NewCustomerRepositoryDb())}
 
-	// /customers/{customer_id:[0-9]+} --> means that the parameter customer_id will contain only numbers 0-9
-	router.HandleFunc("/customers/{customer_id:[0-9]+}", getCustomer).Methods(http.MethodGet)
+	// define routes
+	router.HandleFunc("/customers", ch.getAllCustomers).Methods(http.MethodGet)
 
 	// starting server
 	log.Fatal(http.ListenAndServe("localhost:8001", router))
