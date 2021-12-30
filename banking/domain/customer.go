@@ -1,7 +1,13 @@
 package domain
 
-import "banking/customErrors"
+import (
+	"banking/customErrors"
+	"banking/dto"
+)
 
+/**
+this is the relation to the database table
+*/
 type Customer struct {
 	Id          string `db:"customer_id"`
 	Name        string
@@ -15,6 +21,29 @@ type Customer struct {
 	so the code `db:"customer_id"`
 	makes the relation between db and code
 	*/
+}
+
+func (c Customer) statusAsText() string {
+	// DB Value: 0 --> status inactive
+	// DB Value: 1 --> status active
+
+	statusAsText := "active"
+
+	if c.Status == "0" {
+		statusAsText = "inactive"
+	}
+	return statusAsText
+}
+
+func (c Customer) ToDto() dto.CustomerResponse {
+	return dto.CustomerResponse{
+		Id:          c.Id,
+		Name:        c.Name,
+		City:        c.City,
+		Zipcode:     c.Zipcode,
+		DateofBirth: c.DateofBirth,
+		Status:      c.statusAsText(),
+	}
 }
 
 type CustomerRepository interface {
