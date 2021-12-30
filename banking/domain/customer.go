@@ -3,12 +3,18 @@ package domain
 import "banking/customErrors"
 
 type Customer struct {
-	Id          string
+	Id          string `db:"customer_id"`
 	Name        string
 	City        string
 	Zipcode     string
-	DateofBirth string
+	DateofBirth string `db:"date_of_birth"`
 	Status      string
+
+	/**
+	the database table contains customer_id but our struct contains id
+	so the code `db:"customer_id"`
+	makes the relation between db and code
+	*/
 }
 
 type CustomerRepository interface {
