@@ -28,11 +28,21 @@ type CustomerHandlers struct {
 }
 
 func (ch *CustomerHandlers) getAllCustomers(w http.ResponseWriter, r *http.Request) {
+	status := r.FormValue("status") // active / inactive
+
+	if status == "active" {
+		status = "1"
+	} else if status == "inactive" {
+		status = "0"
+	} else {
+		status = ""
+	}
+
 	/**
 	  w http.ResponseWriter - sends the response back to the client
 	  r *http.Request - request coming to the server
 	*/
-	customers, err := ch.service.GetAllCustomer()
+	customers, err := ch.service.GetAllCustomer(status)
 
 	if err != nil {
 		writeResponse(w, err.Code, err.AsMessage())
