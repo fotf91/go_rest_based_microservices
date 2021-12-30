@@ -7,7 +7,7 @@ import (
 )
 
 type CustomerService interface {
-	GetAllCustomer(status string) ([]domain.Customer, *customErrors.AppError)
+	GetAllCustomer(status string) ([]dto.CustomerResponse, *customErrors.AppError)
 	GetCustomer(string) (*dto.CustomerResponse, *customErrors.AppError)
 }
 
@@ -15,8 +15,19 @@ type DefaultCustomerService struct {
 	repo domain.CustomerRepository
 }
 
-func (s DefaultCustomerService) GetAllCustomer(status string) ([]domain.Customer, *customErrors.AppError) {
-	return s.repo.FindAll(status)
+func (s DefaultCustomerService) GetAllCustomer(status string) ([]dto.CustomerResponse, *customErrors.AppError) {
+	var response []dto.CustomerResponse
+
+	customers, err := s.repo.FindAll(status)
+	if err != nil {
+		return nil, err
+	}
+
+	for _, customer := range customers {
+		response = append(response, customer.ToDto())
+	}
+
+	return response, nil
 }
 
 func (s DefaultCustomerService) GetCustomer(id string) (*dto.CustomerResponse, *customErrors.AppError) {
