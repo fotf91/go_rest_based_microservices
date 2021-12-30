@@ -12,7 +12,7 @@ type Customer struct {
 }
 
 type CustomerRepository interface {
-	FindAll() ([]Customer, error)
+	FindAll() ([]Customer, *customErrors.AppError)
 
 	/**
 	the following returns a customer if exists, else returns nil
