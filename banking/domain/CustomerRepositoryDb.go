@@ -4,6 +4,8 @@ import (
 	"banking/customErrors"
 	"banking/logger"
 	"database/sql"
+	"fmt"
+	"os"
 	"time"
 
 	// command: go get github.com/go-sql-driver/mysql
@@ -64,11 +66,18 @@ func (d CustomerRepositoryDb) ById(id string) (*Customer, *customErrors.AppError
 }
 
 func NewCustomerRepositoryDb() CustomerRepositoryDb {
+	dbUser := os.Getenv("DB_USER")
+	dbPassword := os.Getenv("DB_PASSWD")
+	dbAddr := os.Getenv("DB_ADDR")
+	dbPort := os.Getenv("DB_PORT")
+	dbName := os.Getenv("DB_NAME")
+	dataSource := fmt.Sprintf("%s:%s@tcp(%s:%s)/%s", dbUser, dbPassword, dbAddr, dbPort, dbName)
+
 	/**
 	Function that connects to a running db instance
 	This code is from https://github.com/go-sql-driver/mysql
 	*/
-	client, err := sqlx.Open("mysql", "root:codecamp@tcp(localhost:3306)/banking")
+	client, err := sqlx.Open("mysql", dataSource)
 	if err != nil {
 		panic(err)
 	}
