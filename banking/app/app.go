@@ -22,6 +22,8 @@ func sanityCheck() {
 		"DB_ADDR",
 		"DB_PORT",
 		"DB_NAME",
+		"AUTH_MIDDLEWARE_SERVER_ADDRESS",
+		"AUTH_MIDDLEWARE_SERVER_PORT",
 	}
 	for _, k := range envProps {
 		if os.Getenv(k) == "" {
@@ -46,11 +48,14 @@ func Start() {
 	ah := AccountHandlers{service: service.NewAccountService(accountRepositoryDb)}
 
 	// define routes
-	router.HandleFunc("/customers", ch.getAllCustomers).Methods(http.MethodGet)
+	router.HandleFunc("/customers", ch.getAllCustomers).Methods(http.MethodGet).Name("GetAllCustomers")
 	router.HandleFunc("/customers", ch.getAllCustomers).Queries("status", "{status}").Methods(http.MethodGet)
-	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.getCustomer).Methods(http.MethodGet)
-	router.HandleFunc("/customers/{customer_id:[0-9]+}/account", ah.newAccount).Methods(http.MethodPost)
-	router.HandleFunc("/customers/{customer_id:[0-9]+}/account/{account_id:[0-9]+}", ah.makeTransaction).Methods(http.MethodPost)
+	router.HandleFunc("/customers/{customer_id:[0-9]+}", ch.getCustomer).Methods(http.MethodGet).Name("GetCustomer")
+	router.HandleFunc("/customers/{customer_id:[0-9]+}/account", ah.newAccount).Methods(http.MethodPost).Name("NewAccount")
+	router.HandleFunc("/customers/{customer_id:[0-9]+}/account/{account_id:[0-9]+}", ah.makeTransaction).Methods(http.MethodPost).Name("NewTransaction")
+
+	am := AuthMiddleware{domain.NewAuthRepository()}
+	router.Use(am.authorizationHandler()) // inject the middleware to the router
 
 	// starting server
 	address := os.Getenv("SERVER_ADDRESS")

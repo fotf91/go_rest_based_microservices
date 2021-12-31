@@ -3,7 +3,6 @@ package domain
 import (
 	"banking/customErrors"
 	"banking/logger"
-	"fmt"
 	"strconv"
 
 	"github.com/jmoiron/sqlx"
@@ -90,7 +89,6 @@ func (d AccountRepositoryDb) SaveTransaction(t Transaction) (*Transaction, *cust
 }
 
 func (d AccountRepositoryDb) FindBy(accountId string) (*Account, *customErrors.AppError) {
-	fmt.Printf(">>> accountId = %v\n", accountId)
 	sqlGetAccount := "SELECT account_id, customer_id, opening_date, account_type, amount from accounts where account_id = ?"
 	var account Account
 	err := d.client.Get(&account, sqlGetAccount, accountId)
