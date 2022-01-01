@@ -27,6 +27,7 @@ func (a Account) ToNewAccountResponseDto() dto.NewAccountResponse {
 	return dto.NewAccountResponse{AccountId: a.AccountId}
 }
 
+//go:generate mockgen -destination=../mocks/domain/mockAccountRepository.go -package=domain banking/domain AccountRepository
 type AccountRepository interface {
 	Save(Account) (*Account, *customErrors.AppError)
 	FindBy(string) (*Account, *customErrors.AppError)
